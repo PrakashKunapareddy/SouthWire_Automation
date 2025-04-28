@@ -8,8 +8,7 @@ Feature: Login Functionality for SouthWire Login
     Examples:
       | username        | password         | expected_output                |
 #      Valid Credentials
-      | "vassaruser"    | "Vassarlabs@123" | "utilityDashbord"              |
-      | "southwireuser" | "Southwire@123"  | "utilityDashbord"              |
+      | "southwiremain" | "Southwire@123"  | "utilityDashbord"              |
 #      InValid Credentials
       | "vassaruser"    | "wrongPassword"  | "Invalid Username or Password" |
       | "user!@#123"    | "Vassarlabs@123" | "Invalid Username or Password" |

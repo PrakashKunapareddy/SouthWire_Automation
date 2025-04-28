@@ -1,52 +1,50 @@
 package com.vassarlabs.projectname.page;
 
+import com.vassarlabs.projectname.utils.Xpaths;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.time.Duration;
 
 public class LoginPage {
     WebDriver driver;
-
-    private By Username = By.xpath("//input[@placeholder='Enter your username']");
-    private By Password = By.xpath("//input[@placeholder='Enter your password']");
-    private By LoginButton = By.xpath("//span[text()='Login']/parent::button");
-    private By LoginButtonDisabled = By.xpath("//span[text()='Login']/parent::button[@disabled]");
-    private By errorMessageIncorrectCredentials = By.xpath("//div[text()='Invalid Username or Password']");
+    WebDriverWait wait;
+    Xpaths x_paths = new Xpaths();
     private boolean flag = true;
-
     public LoginPage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public void enterUsername(String username) throws InterruptedException {
-        WebElement un = driver.findElement(Username);
+        wait.until(ExpectedConditions.presenceOfElementLocated(x_paths.Username));
+        WebElement un = driver.findElement(x_paths.Username);
         un.sendKeys(username);
+        wait.until(ExpectedConditions.presenceOfElementLocated(x_paths.continueButton));
+        driver.findElement(x_paths.continueButton).click();
     }
 
     public void enterPassword(String password) throws InterruptedException {
-        WebElement pw = driver.findElement(Password);
+        wait.until(ExpectedConditions.presenceOfElementLocated(x_paths.Password));
+        WebElement pw = driver.findElement(x_paths.Password);
         pw.sendKeys(password);
     }
 
     public void clickSignInButton() throws InterruptedException {
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        Thread.sleep(3000);
-        if (driver.findElements(LoginButtonDisabled).size()>0) {
-            flag = false;
-        } else {
-            driver.findElement(LoginButton).click();
-        }
+        wait.until(ExpectedConditions.presenceOfElementLocated(x_paths.LoginButton));
+        driver.findElement(x_paths.LoginButton).click();
+
     }
 
     public void validateLogin(String expected_output) throws Throwable {
         if (flag) {
-            Thread.sleep(2000);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-            if (driver.findElements(errorMessageIncorrectCredentials).size() > 0) {
-                String Failed = driver.findElement(errorMessageIncorrectCredentials).getText();
+            wait.until(ExpectedConditions.presenceOfElementLocated(x_paths.errorMessageIncorrectCredentials));
+            if (driver.findElements(x_paths.errorMessageIncorrectCredentials).size() > 0) {
+                String Failed = driver.findElement(x_paths.errorMessageIncorrectCredentials).getText();
                 Assert.assertEquals(expected_output, Failed, "Expected Error Message " + Failed + " But Found : " + expected_output);
             }
             else{

@@ -1,59 +1,120 @@
 package com.vassarlabs.projectname.utils;
 
-import com.vassarlabs.projectname.driver.WebdriverInitializer;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
+import org.apache.poi.ss.usermodel.*;
 
-import java.time.Duration;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.*;
+
+import static com.vassarlabs.projectname.utils.Constants.Excel_Path_For_Data_Validation;
 
 public class CommonMethods {
 
-    public  void verifyData(WebDriver driver,By ele,String input){
-        String actualData = driver.findElement(ele).getText();
-        Assert.assertEquals(input,actualData,"Expected Data : "+input+" But Found : "+actualData);
+    public HashMap<String, HashMap<String, HashMap<String, Double>>> extract_data_for_heatmap(String input) {
+        HashMap<String, HashMap<String, HashMap<String, Double>>> utilityData = new HashMap<>();
+        String[] entries = input.split(",");
+        for (String entry : entries) {
+            String[] parts = entry.split("@");
+
+            String utilityRegionState = parts[0];
+            double value;
+            value = Double.parseDouble(parts[1]);
+
+            String[] utilityRegionStateParts = utilityRegionState.split("-");
+
+            String utility_and_region = utilityRegionStateParts[0];
+            String state = utilityRegionStateParts[1];
+
+            String utility = utility_and_region.split("_")[0];
+            String region = utility_and_region.split("_")[1];
+
+            utilityData
+                    .computeIfAbsent(utility, k -> new HashMap<>())
+                    .computeIfAbsent(region, k -> new HashMap<>())
+                    .put(state, value);
+        }
+        return utilityData;
     }
-    public void enterData(WebDriver driver,By ele,String input){
-        driver.findElement(ele).sendKeys(input);
+
+    public Map<String, Object> extract_filter_data(String input) {
+        Map<String, Object> resultMap = new LinkedHashMap<>();
+        String[] sections = input.split("%");
+        for (String section : sections) {
+            String[] parts = section.split("-");
+            String key = parts[0].trim();
+            String values = parts[1].trim();
+
+            if (key.equals("Select Utility")) {
+                Map<String, List<String>> utilityMap = new LinkedHashMap<>();
+                String[] utilityTypes = values.split(",");
+                for (String utilityType : utilityTypes) {
+                    String[] utilityParts = utilityType.split("@");
+                    if (utilityParts.length > 1) {
+                        String[] utilityValues = utilityParts[1].split("_");
+                        utilityMap.put(utilityParts[0].trim(), Arrays.asList(utilityValues));
+                    } else {
+                        utilityMap.put(utilityParts[0].trim(), Arrays.asList(utilityParts[0].trim()));
+                    }
+                }
+                resultMap.put(key, utilityMap);
+            } else if (key.equals("Select Territory")) {
+                Map<String, Object> territoryMap = new LinkedHashMap<>();
+                String[] territoryParts = values.split(",");
+                for (String territoryPart : territoryParts) {
+                    String[] territorySections = territoryPart.split("@");
+                    if (territorySections.length > 1) {
+                        String[] territoryValues = territorySections[1].split("_");
+                        territoryMap.put(territorySections[0].trim(), Arrays.asList(territoryValues));
+                    } else {
+                        territoryMap.put(territorySections[0].trim(), Arrays.asList(territorySections[0].trim()));
+                    }
+                }
+                resultMap.put(key, territoryMap);
+            } else {
+                resultMap.put(key, Arrays.asList(values.split(",")));
+            }
+        }
+        return resultMap;
     }
-    public void selectOptionByText(WebDriver driver,By ele,String input){
-        Select sl = new Select(driver.findElement(ele));
-        sl.selectByVisibleText(input);
+
+    public HashMap<Integer, Integer> extract_yearwise_data(String input) {
+        HashMap<Integer, Integer> data = new HashMap<>();
+        return data;
     }
-    public void selectOptionByIndex(WebDriver driver,By ele,int i){
-        Select sl = new Select(driver.findElement(ele));
-        sl.selectByIndex(i);
+
+    public HashMap<String, Integer> extract_paretoChart_data(String input) {
+        HashMap<String, Integer> data = new HashMap<>();
+        return data;
     }
-    public void clickElement(WebDriver driver,By ele) throws InterruptedException {
-        driver.findElement(ele).click();
-        Thread.sleep(500);
+
+    public static Map<String, Map<String, String>> read_data_from_excel(String company) throws Throwable {
+        Map<String, Map<String, String>> yearlyData = new LinkedHashMap<>();
+        FileInputStream file = new FileInputStream(Excel_Path_For_Data_Validation);
+        Workbook workbook = WorkbookFactory.create(file);
+        Sheet sheet = workbook.getSheet(company);
+        Row headerRow = sheet.getRow(0);
+        List<String> headers = new ArrayList<>();
+        for (int i = 1; i < headerRow.getLastCellNum(); i++) {
+            headers.add(headerRow.getCell(i).getStringCellValue());
+        }
+        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            Cell yearCell = row.getCell(0);
+            String year = String.valueOf((int) yearCell.getNumericCellValue());
+            Map<String, String> yearData = new HashMap<>();
+            for (int colNum = 1; colNum < headerRow.getLastCellNum(); colNum++) {
+                String metricName = headers.get(colNum - 1);
+                Cell valueCell = row.getCell(colNum);
+                String metricValue = valueCell != null ? (valueCell.getCellType() == CellType.NUMERIC ? String.valueOf((int) valueCell.getNumericCellValue()) : valueCell.getStringCellValue()) : "";
+                yearData.put(metricName, metricValue);
+            }
+            yearlyData.put(year, yearData);
+        }
+        workbook.close();
+        file.close();
+        return yearlyData;
     }
-    public void verifyCheckedOrNot(WebDriver driver,By ele){
-        Boolean flag = driver.findElement(ele).isSelected();
-        Assert.assertEquals(flag,true,"WebElement is not Selected or Checked");
-    }
-    public void verifyEnabledOrNot(WebDriver driver,By ele){
-        Boolean flag = driver.findElement(ele).isEnabled();
-        Assert.assertEquals(flag,true,"WebElement is not Enabled");
-    }
-    public void verifyDisplayedOrNot(WebDriver driver,By ele){
-        Boolean flag = driver.findElement(ele).isDisplayed();
-        Assert.assertEquals(flag,true,"WebElement is not Displayed");
-    }
-    public void waitTillDisplayed(WebDriver driver,By ele){
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        wait.until(ExpectedConditions.presenceOfElementLocated(ele));
-    }
-    public void waitTillClickable(WebDriver driver,By ele){
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        wait.until(ExpectedConditions.elementToBeClickable(ele));
-    }
-    public void waitSelectedOrNot(WebDriver driver,By ele) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        wait.until(ExpectedConditions.elementToBeSelected(ele));
-    }
+
 }
+
