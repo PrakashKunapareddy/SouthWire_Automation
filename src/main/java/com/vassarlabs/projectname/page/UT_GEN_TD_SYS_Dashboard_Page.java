@@ -1,5 +1,6 @@
 package com.vassarlabs.projectname.page;
 
+import com.vassarlabs.projectname.driver.WebdriverInitializer;
 import com.vassarlabs.projectname.utils.CommonMethods;
 import com.vassarlabs.projectname.utils.Xpaths;
 import org.openqa.selenium.By;
@@ -16,7 +17,7 @@ public class UT_GEN_TD_SYS_Dashboard_Page {
     WebDriver driver;
     WebDriverWait wait;
     Xpaths x_paths = new Xpaths();
-    CommonMethods commonMethods = new CommonMethods();
+    CommonMethods commonMethods = new CommonMethods(WebdriverInitializer.getDriver());
 
 
     public UT_GEN_TD_SYS_Dashboard_Page(WebDriver driver) {

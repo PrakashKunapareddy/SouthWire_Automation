@@ -1,15 +1,26 @@
 package com.vassarlabs.projectname.utils;
 
 import org.apache.poi.ss.usermodel.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.Duration;
 import java.util.*;
 
-import static com.vassarlabs.projectname.utils.Constants.Excel_Path_For_Data_Validation;
+import static com.vassarlabs.projectname.utils.Constants.EXCEL_PATH_FOR_DATA_VALIDATION;
 
 public class CommonMethods {
+    WebDriverWait wait;
+    WebDriver driver;
+    public CommonMethods(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
 
     public HashMap<String, HashMap<String, HashMap<String, Double>>> extract_data_for_heatmap(String input) {
         HashMap<String, HashMap<String, HashMap<String, Double>>> utilityData = new HashMap<>();
@@ -88,9 +99,9 @@ public class CommonMethods {
         return data;
     }
 
-    public static Map<String, Map<String, String>> read_data_from_excel(String company) throws Throwable {
-        Map<String, Map<String, String>> yearlyData = new LinkedHashMap<>();
-        FileInputStream file = new FileInputStream(Excel_Path_For_Data_Validation);
+    public Map<Integer, Map<String, Integer>> read_data_from_excel(String company) throws Throwable {
+        Map<Integer, Map<String, Integer>> yearlyData = new LinkedHashMap<>();
+        FileInputStream file = new FileInputStream(EXCEL_PATH_FOR_DATA_VALIDATION);
         Workbook workbook = WorkbookFactory.create(file);
         Sheet sheet = workbook.getSheet(company);
         Row headerRow = sheet.getRow(0);
@@ -101,19 +112,26 @@ public class CommonMethods {
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
             Cell yearCell = row.getCell(0);
-            String year = String.valueOf((int) yearCell.getNumericCellValue());
-            Map<String, String> yearData = new HashMap<>();
+            Integer year = Integer.valueOf(String.valueOf((int) yearCell.getNumericCellValue()));
+            Map<String, Integer> yearData = new HashMap<>();
             for (int colNum = 1; colNum < headerRow.getLastCellNum(); colNum++) {
                 String metricName = headers.get(colNum - 1);
                 Cell valueCell = row.getCell(colNum);
                 String metricValue = valueCell != null ? (valueCell.getCellType() == CellType.NUMERIC ? String.valueOf((int) valueCell.getNumericCellValue()) : valueCell.getStringCellValue()) : "";
-                yearData.put(metricName, metricValue);
+                yearData.put(metricName, Integer.parseInt(metricValue));
             }
             yearlyData.put(year, yearData);
         }
         workbook.close();
         file.close();
         return yearlyData;
+    }
+
+    public void navigate_to_given_dashboards(String DashboardName){
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@data-pc-section='headeraction']")));
+        if(!(DashboardName.equals("UT, GEN, TD-SYS"))){
+            driver.findElement(By.xpath("//a[@data-pc-section='headeraction']/span[text()='"+DashboardName+"']")).click();
+        }
     }
 
 }
