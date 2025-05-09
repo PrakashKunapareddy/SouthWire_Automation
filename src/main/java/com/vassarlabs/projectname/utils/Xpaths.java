@@ -19,26 +19,15 @@ public class Xpaths {
     public By select_10_years_years_dropdown = By.xpath("//span[text()='5 Years']/parent::div//ul//li/span[text()='10 Years']");
     public By select_15_years_years_dropdown = By.xpath("//span[text()='5 Years']/parent::div//ul//li/span[text()='15 Years']");
 
+    public By Hamburger_x_path = By.xpath("//button[@class='p-ripple p-element p-button p-component p-button-icon-only p-button-contrast p-button-text btn-header text-3xl']");
 
     //    Dashboard 1 XPaths
     public By utility_spend_section = By.xpath("//div/h4[text()='Utility Spend']");
     public By Generation_spend_section = By.xpath("//div/h4[text()='Generation Spend']");
     public By T_D_spend_section = By.xpath("//div/h4[text()='Transmission & Distribution System Spend']");
-    public By utility_spend_section_data_table = By.xpath("");
-    public By generation_spend_section_data_table = By.xpath("");
-    public By t_d_spend_section_data_table = By.xpath("");
-    public By wire_and_cable_spend_section_data_table = By.xpath("");
-    public By t_wire_and_cable_spend_section_data_table = By.xpath("");
-    public By d_wire_and_cable_spend_section_data_table = By.xpath("");
-    public By toh_spend_section_data_table = By.xpath("");
-    public By tug_spend_section_data_table = By.xpath("");
-    public By doh_spend_section_data_table = By.xpath("");
-    public By dmv_spend_section_data_table = By.xpath("");
-    public By d600v_spend_section_data_table = By.xpath("");
-    public By dug_spend_section_data_table = By.xpath("");
-    public By dug_mv_spend_section_data_table = By.xpath("");
-    public By dug_600v_spend_section_data_table = By.xpath("");
-    public By gen_t10_spend_section_data_table = By.xpath("");
+    public By energy_sources_select_company_group_dropdown = By.xpath("//chevrondownicon[@class = 'p-element p-icon-wrapper ng-star-inserted']/parent::div/parent::div/parent::p-treeselect[@placeholder='Select Utility']");
+    public By top_10_utilities_gw_table = By.xpath("//table[@class='p-datatable-table ng-star-inserted']/parent::div//parent::div//parent::p-table/parent::app-prime-table//h3[text()='Top 10 Utility (GW)']");
+    public By utility_names_for_energy_source = By.xpath("//h3[text()='Top 10 Utility (GW)']//parent::div/parent::div/parent::app-prime-table/p-table//table//tr//td[1]");
     public By energy_sources_spend_section_data_table = By.xpath("//h3[text()='Top 10 Utility (GW)']//parent::div//parent::div//parent::app-prime-table//tbody/parent::table/thead/tr/th/div[text()=' Utility Name ']//parent::th//parent::tr//parent::thead//parent::table[1]//tbody/tr/td[1]/span");
 
     //  Data View Tables X Paths
