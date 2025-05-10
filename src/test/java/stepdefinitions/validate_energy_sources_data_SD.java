@@ -21,9 +21,15 @@ public class validate_energy_sources_data_SD {
     }
 
 
-    @Then("validate the dashboard data against excel data {string}")
-    public void validateTheDashboardDataAgainstExcelData(String company_group) throws Throwable {
-        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, Double>>> result = commonMethods.read_energy_data_from_excel(company_group);
-        validationClass.validate_dashboard_data_with_excel_data(result);
+    @Then("validate the dashboard data against excel data {string} {string}")
+    public void validateTheDashboardDataAgainstExcelData(String company_group, String dashboard) throws Throwable {
+        if(dashboard.equals("GEN Energy Sources")) {
+            LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, Double>>> result = commonMethods.read_energy_data_from_excel(company_group);
+            validationClass.validate_dashboard_data_with_excel_data(result);
+        } else if (dashboard.equals("GEN Growth Top 10, Region")) {
+            LinkedHashMap<String, LinkedHashMap<String, Object>> excel_result = commonMethods.read_generation_data_from_excel();
+            LinkedHashMap<String, LinkedHashMap<String, String>> ui_result = validationClass.extract_UI_generation_data();
+            validationClass.compare_generation_data(excel_result,ui_result);
+        }
     }
 }

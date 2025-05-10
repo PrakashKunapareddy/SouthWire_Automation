@@ -28,7 +28,7 @@ public class Xpaths {
     public By energy_sources_select_company_group_dropdown = By.xpath("//chevrondownicon[@class = 'p-element p-icon-wrapper ng-star-inserted']/parent::div/parent::div/parent::p-treeselect[@placeholder='Select Utility']");
     public By top_10_utilities_gw_table = By.xpath("//table[@class='p-datatable-table ng-star-inserted']/parent::div//parent::div//parent::p-table/parent::app-prime-table//h3[text()='Top 10 Utility (GW)']");
     public By utility_names_for_energy_source = By.xpath("//h3[text()='Top 10 Utility (GW)']//parent::div/parent::div/parent::app-prime-table/p-table//table//tr//td[1]");
-    public By energy_sources_spend_section_data_table = By.xpath("//h3[text()='Top 10 Utility (GW)']//parent::div//parent::div//parent::app-prime-table//tbody/parent::table/thead/tr/th/div[text()=' Utility Name ']//parent::th//parent::tr//parent::thead//parent::table[1]//tbody/tr/td[1]/span");
+    public By generation_section_data_table = By.xpath("//h3[text()='Top 10 Utilities']/ancestor::app-prime-table//table[@class='p-datatable-table ng-star-inserted']//tbody//tr");
 
     //  Data View Tables X Paths
     public static final ArrayList<String> DASHBOARD1_SECTION_X_PATHS = new ArrayList<String>() {{

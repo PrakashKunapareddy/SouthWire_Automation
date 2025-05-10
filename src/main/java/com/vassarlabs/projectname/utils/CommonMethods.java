@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.time.Duration;
 import java.util.*;
@@ -253,6 +254,28 @@ public class CommonMethods {
         }
     }
 
+    public LinkedHashMap<String, LinkedHashMap<String, Object>> read_generation_data_from_excel() throws Throwable {
+        FileInputStream fis = new FileInputStream(EXCEL_PATH_FOR_GENERATION_DATA_VALIDATION);
+        Workbook workbook = new XSSFWorkbook(fis);
+        Sheet sheet = workbook.getSheetAt(0);
+
+        LinkedHashMap<String, LinkedHashMap<String, Object>> dataMap = new LinkedHashMap<>();
+
+        Row headerRow = sheet.getRow(0);
+        int numColumns = headerRow.getPhysicalNumberOfCells();
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            String companyName = formatter.formatCellValue(row.getCell(0)).trim();
+            LinkedHashMap<String, Object> rowData = new LinkedHashMap<>();
+            for (int colIndex = 1; colIndex < numColumns; colIndex++) {
+                rowData.put(formatter.formatCellValue(headerRow.getCell(colIndex)).trim(), formatter.formatCellValue(row.getCell(colIndex)).trim());
+            }
+            dataMap.put(companyName, rowData);
+        }
+        workbook.close();
+        return dataMap;
+    }
 
 }
 
