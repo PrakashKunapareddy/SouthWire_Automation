@@ -1,0 +1,6 @@
+stepdefinitions/UT_GEN_TD_SYS_DashboardSD.class
+apphooks/ApplicationHooks.class
+stepdefinitions/LoginStepDefnitions.class
+stepdefinitions/validate_energy_sources_data_SD.class
+testrunner/TestRunner.class
+stepdefinitions/validate_data_SD.class
